@@ -146,7 +146,8 @@ def quant_fx(model):
         # 'object_type': []
     }
     model_to_quantize = copy.deepcopy(model)
-    prepared_model = prepare_fx(model_to_quantize, qconfig_dict)
+    example_inputs = (torch.randn(1, 3, 32, 32),)
+    prepared_model = prepare_fx(model_to_quantize, qconfig_dict, example_inputs)
     print("prepared model: ", prepared_model)
 
     quantized_model = convert_fx(prepared_model)
@@ -159,9 +160,9 @@ def calib_quant_model(model, calib_dataloader):
     """
     校准函数
     """
-    assert isinstance(
-        model, ObservedGraphModule
-    ), "model must be a perpared fx ObservedGraphModule."
+    # assert isinstance(
+    #     model, ObservedGraphModule
+    # ), "model must be a perpared fx ObservedGraphModule."
     model.eval()
     with torch.inference_mode():
         for inputs, labels in calib_dataloader:
@@ -181,12 +182,13 @@ def quant_calib_and_eval(model):
     }
 
     model2 = copy.deepcopy(model)
-    model_prepared = prepare_fx(model2, qconfig_dict)
+    example_inputs = (torch.randn(1, 3, 32, 32),)
+    model_prepared = prepare_fx(model2, qconfig_dict, example_inputs)
     model_int8 = convert_fx(model_prepared)
     model_int8.load_state_dict(torch.load("r18_quant.pth"))
     model_int8.eval()
 
-    a = torch.randn([1, 3, 224, 224])
+    a = torch.randn([1, 3, 32, 32])
     o1 = model(a)
     o2 = model_int8(a)
 
@@ -205,12 +207,13 @@ def quant_calib_and_eval(model):
 
     # calib quant model
     model2 = copy.deepcopy(model)
-    model_prepared = prepare_fx(model2, qconfig_dict)
+    example_inputs = (torch.randn(1, 3, 32, 32),)
+    model_prepared = prepare_fx(model2, qconfig_dict, example_inputs)
     model_int8 = convert_fx(model_prepared)
     torch.save(model_int8.state_dict(), "r18.pth")
     model_int8.eval()
 
-    model_prepared = prepare_fx(model2, qconfig_dict)
+    model_prepared = prepare_fx(model2, qconfig_dict, example_inputs)
     calib_quant_model(model_prepared, test_loader)  # 对模型进行校准
     model_int8 = convert_fx(model_prepared)
     torch.save(model_int8.state_dict(), "r18_quant_calib.pth")
