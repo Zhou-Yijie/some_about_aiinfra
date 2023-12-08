@@ -1,6 +1,12 @@
 # AI_HPC
 AI高性能计算相关
 
+## Code 
+### pytorch_int8_resnet.py
+#### 运行结果
+<img width="671" alt="截屏2023-12-08 12 51 33" src="https://github.com/Zhou-Yijie/AI_HPC/assets/118658953/30ea91d1-f09f-4f3e-8c3d-51bdb150ac48">
+
+
 ## Quantization
 [pytorch Quantization Introduction](https://pytorch.org/blog/introduction-to-quantization-on-pytorch/)
 
