@@ -1,6 +1,4 @@
-# AI_HPC
-AI高性能计算相关
-
+# some_about_aiinfra
 ## Code 
 ### pytorch_int8_resnet.py
 #### 运行结果
